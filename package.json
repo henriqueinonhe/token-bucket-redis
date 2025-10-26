@@ -4,7 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "files": [
-    "dist"
+    "dist",
+    "lua"
   ],
   "scripts": {
     "prepublishOnly": "pnpm run test && pnpm build",
