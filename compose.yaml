@@ -1,0 +1,6 @@
+services:
+  redis:
+    image: redis:8.2.2
+    container_name: token-bucket-redis
+    ports:
+      - 6379:6379
