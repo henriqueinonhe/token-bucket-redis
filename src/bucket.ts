@@ -41,7 +41,6 @@ export const createBucket = ({
       };
 
   const safeConsume = async (amount = 1): Promise<SafeConsumeOutput> => {
-    const nowInMilliseconds = Date.now();
 
     const result = (await redisClientOrPool.fCall(libFunctionName, {
       keys: [key],
@@ -49,7 +48,6 @@ export const createBucket = ({
         capacity.toString(),
         amount.toString(),
         refillRateInTokensPerMinute.toString(),
-        nowInMilliseconds.toString(),
       ],
     })) as RedisFunctionResult;
 

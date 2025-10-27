@@ -1,11 +1,22 @@
 #!lua name=token_bucket_redis_1_0_0
 
+local function get_now_in_milliseconds()
+  local result = redis.call("TIME")
+
+  local seconds = result[1]
+  local microseconds_of_second = result[2]
+
+  local milliseconds = (seconds * 1000) + math.floor((microseconds_of_second / 1000))
+
+  return milliseconds
+end
+
 local function use_token_bucket(keys, args)
   local bucket_key = keys[1]
   local token_capacity = tonumber(args[1])
   local token_cost = tonumber(args[2])
   local token_refill_rate_in_tokens_per_minute = tonumber(args[3])
-  local now_in_milliseconds = tonumber(args[4])
+  local now_in_milliseconds = get_now_in_milliseconds()
 
   local bucket = (function()
     local stored_bucket = redis.call("HGETALL", bucket_key)
