@@ -5,7 +5,7 @@
 The **token bucket algorithm** is used for rate limiting, like when you want to rate limit an endpoint of your API:
 
 ```ts
-import { initialize } from "red-bucket";
+import { initialize, createBucket } from "red-bucket";
 
 // At your app's startup
 const redisClientPool = (await createClientPool({
