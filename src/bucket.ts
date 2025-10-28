@@ -2,6 +2,7 @@ import { redisClientOrPool } from "./client.js";
 import { libVersion, libFunctionName } from "./lib.js";
 
 export type Bucket = {
+  safeConsume: (amount?: number) => Promise<SafeConsumeOutput>;
   consume: (amount?: number) => Promise<{ tokenAmount: number }>;
   getId: () => string;
   getCapacity: () => number;
@@ -28,20 +29,7 @@ export const createBucket = ({
 
   const key = `TOKEN_BUCKET_REDIS_${libVersion}_${id}`;
 
-  type SafeConsumeOutput =
-    | {
-        success: true;
-        tokenAmount: number;
-        error?: never;
-      }
-    | {
-        success: false;
-        tokenAmount: number;
-        error: TokenBucketError;
-      };
-
   const safeConsume = async (amount = 1): Promise<SafeConsumeOutput> => {
-
     const result = (await redisClientOrPool.fCall(libFunctionName, {
       keys: [key],
       arguments: [
@@ -117,10 +105,23 @@ export const createBucket = ({
     getCapacity,
     getRefillRate,
     getTokenAmount,
+    safeConsume,
   };
 
   return bucket;
 };
+
+type SafeConsumeOutput =
+  | {
+      success: true;
+      tokenAmount: number;
+      error?: never;
+    }
+  | {
+      success: false;
+      tokenAmount: number;
+      error: TokenBucketError;
+    };
 
 type RedisFunctionResult = ["SUCCESS" | "FAIL", tokens: string];
 
